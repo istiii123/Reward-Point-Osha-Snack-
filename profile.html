@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profil - Reward Koin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Profil Pengguna</h2>
+
+  <div class="profile-box">
+    <p><strong>Nama:</strong> <span id="namaPengguna">-</span></p>
+    <p><strong>Saldo Koin:</strong> <span id="saldoKoin">0</span> koin</p>
+
+    <h3>Masukkan Barcode Kemasan</h3>
+    <input type="text" id="barcodeInput" placeholder="Masukkan barcode">
+    <button onclick="gunakanBarcode()">Gunakan Barcode</button>
+
+    <br><br>
+    <button onclick="tambahKoin(10)">Tambah 10 Koin Manual</button>
+    <button onclick="tukarKoin()">Tukar 50 Koin</button>
+
+    <br><br>
+    <button onclick="logout()" style="background-color:#dc3545;">Logout</button>
+  </div>
+
+  <script>
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+      alert("Silakan login terlebih dahulu.");
+      window.location.href = "login.html";
+    }
+
+    const nama = localStorage.getItem("namaPengguna");
+    let saldo = parseInt(localStorage.getItem("saldoKoin")) || 0;
+    const barcodeDipakai = JSON.parse(localStorage.getItem("barcodeDipakai") || "[]");
+
+    document.getElementById("namaPengguna").textContent = nama;
+    document.getElementById("saldoKoin").textContent = saldo;
+
+    // Daftar barcode valid dan nilai koinnya (contoh)
+    const barcodeValid = {
+      "123456789012": 10,
+      "987654321098": 20,
+      "112233445566": 15,
+      "556677889900": 50
+    };
+
+    function gunakanBarcode() {
+      const barcode = document.getElementById("barcodeInput").value.trim();
+
+      if (!barcode) {
+        alert("Masukkan barcode terlebih dahulu.");
+        return;
+      }
+
+      if (barcodeDipakai.includes(barcode)) {
+        alert("Barcode ini sudah pernah dipakai.");
+        return;
+      }
+
+      if (barcodeValid[barcode]) {
+        const nilai = barcodeValid[barcode];
+        saldo += nilai;
+
+        localStorage.setItem("saldoKoin", saldo);
+        barcodeDipakai.push(barcode);
+        localStorage.setItem("barcodeDipakai", JSON.stringify(barcodeDipakai));
+
+        let user = JSON.parse(localStorage.getItem("user"));
+        user.saldoKoin = saldo;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        document.getElementById("saldoKoin").textContent = saldo;
+        alert(`Berhasil! Koin bertambah ${nilai} dari barcode ${barcode}.`);
+
+        document.getElementById("barcodeInput").value = "";
+      } else {
+        alert("Barcode tidak valid.");
+      }
+    }
+
+    function tambahKoin(jumlah) {
+      saldo += jumlah;
+      localStorage.setItem("saldoKoin", saldo);
+
+      let user = JSON.parse(localStorage.getItem("user"));
+      user.saldoKoin = saldo;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      document.getElementById("saldoKoin").textContent = saldo;
+      alert(`Koin bertambah ${jumlah}!`);
+    }
+
+    function tukarKoin() {
+      if (saldo >= 50) {
+        saldo -= 50;
+        localStorage.setItem("saldoKoin", saldo);
+
+        let user = JSON.parse(localStorage.getItem("user"));
+        user.saldoKoin = saldo;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        document.getElementById("saldoKoin").textContent = saldo;
+        alert("Berhasil tukar 50 koin!");
+      } else {
+        alert("Koin tidak cukup.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("namaPengguna");
+      localStorage.removeItem("saldoKoin");
+      localStorage.removeItem("barcodeDipakai");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
