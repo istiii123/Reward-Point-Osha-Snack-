@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daftar - Reward Koin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Pendaftaran</h2>
+
+  <div class="profile-box">
+    <label>Nama Pengguna:</label><br>
+    <input type="text" id="namaInput" placeholder="Masukkan nama Anda"><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" id="emailInput" placeholder="Masukkan email Anda"><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="passwordInput" placeholder="Masukkan password"><br><br>
+
+    <button onclick="daftar()">Daftar</button>
+  </div>
+
+  <script>
+    function daftar() {
+      const nama = document.getElementById("namaInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim();
+      const password = document.getElementById("passwordInput").value;
+
+      if (!nama || !email || !password) {
+        alert("Semua field harus diisi.");
+        return;
+      }
+
+      // Simpan data ke localStorage (format sederhana)
+      const userData = {
+        nama: nama,
+        email: email,
+        password: password,
+        saldoKoin: 0
+      };
+
+      // Simpan dalam localStorage sebagai JSON string
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      alert("Pendaftaran berhasil!");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
